@@ -31,11 +31,11 @@ cardid  = 0
  		widget.text = '<span color="white"> ' .. volume ..' </span>'
  	elseif mode == "up" then
  		io.popen("amixer -q -c " .. cardid .. " sset " .. channel .. " 5%+"):read("*all")
- 		io.popen("amixer -q -c " .. cardid .. " sset LFE 1%+"):read("*all")
+ 		io.popen("amixer -q -c " .. cardid .. " sset LFE 5%+"):read("*all")
  		volume("update", widget)
  	elseif mode == "down" then
  		io.popen("amixer -q -c " .. cardid .. " sset " .. channel .. " 5%-"):read("*all")
- 		io.popen("amixer -q -c " .. cardid .. " sset LFE 1%-"):read("*all")
+ 		io.popen("amixer -q -c " .. cardid .. " sset LFE 5%-"):read("*all")
  		volume("update", widget)
  	else
  		io.popen("amixer -c " .. cardid .. " sset " .. channel .. " toggle"):read("*all")
@@ -182,11 +182,11 @@ for s = 1, screen.count() do
     vicious.register(datewidget, vicious.widgets.date, '<span color="white">%b %d, %R</span> ', 60)
 
     tb_volume = widget({ type = "textbox", name = "tb_volume", align = "right" })
-    tb_volume:buttons({
-      button({ }, 4, function () volume("up", tb_volume) end),
-      button({ }, 5, function () volume("down", tb_volume) end),
-      button({ }, 1, function () volume("mute", tb_volume) end)
-    })
+    tb_volume:buttons(awful.util.table.join(
+      awful.button({ }, 4, function () volume("up", tb_volume) end),
+      awful.button({ }, 5, function () volume("down", tb_volume) end),
+      awful.button({ }, 1, function () volume("mute", tb_volume) end)
+    ))
     volume("update", tb_volume)
 
 
@@ -284,7 +284,10 @@ globalkeys = awful.util.table.join(
                   mypromptbox[mouse.screen].widget,
                   awful.util.eval, nil,
                   awful.util.getdir("cache") .. "/history_eval")
-              end)
+              end),
+    awful.key({}, "XF86AudioRaiseVolume", function () volume("up", tb_volume) end),
+    awful.key({}, "XF86AudioLowerVolume", function () volume("down", tb_volume) end),
+    awful.key({}, "XF86AudioMute", function () volume("mute", tb_volume) end)
 )
 
 clientkeys = awful.util.table.join(
